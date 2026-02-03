@@ -12,14 +12,24 @@ This skill provides a thin wrapper around the Google Calendar REST API. It lets 
 - **update** an existing event by its ID
 - **delete** an event by its ID
 
-The skill is implemented in Python (`scripts/google_calendar.py`). It expects the following environment variables to be set (you can store them securely with `openclaw secret set`):
+The skill is implemented in Python (`scripts/google_calendar.py`). It expects the following environment variables to be set:
+
 ```
 GOOGLE_CLIENT_ID=…
 GOOGLE_CLIENT_SECRET=…
-GOOGLE_REFRESH_TOKEN=…   # obtained after OAuth consent
-GOOGLE_CALENDAR_ID=primary   # or the ID of a specific calendar
+GOOGLE_REFRESH_TOKEN=…       # obtained after OAuth consent
+GOOGLE_ACCESS_TOKEN=…        # short-lived, auto-refreshed
+GOOGLE_CALENDAR_IDS=…        # comma-separated list of calendar IDs
 ```
-The first time you run the skill you may need to perform an OAuth flow to obtain a refresh token – see the **Setup** section below.
+
+**Credential Storage (on this system):**
+Credentials are stored in `~/.config/google-calendar/secrets.env` as environment variable exports. To use them:
+```bash
+source ~/.config/google-calendar/secrets.env
+# Or: export $(grep -v '^#' ~/.config/google-calendar/secrets.env | xargs)
+```
+
+The `GOOGLE_ACCESS_TOKEN` expires every ~1 hour. The skill will need to refresh it using the `GOOGLE_REFRESH_TOKEN` if expired.
 
 ## Commands
 ```
